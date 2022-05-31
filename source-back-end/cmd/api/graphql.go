@@ -4,11 +4,13 @@ import (
 	"backend/models"
 	"encoding/json"
 	"errors"
-	fmt "fmt"
-	"github.com/graphql-go/graphql"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"strings"
+
+	"github.com/graphql-go/graphql"
 )
 
 var movies []*models.Movie
@@ -42,6 +44,28 @@ var fields = graphql.Fields{
 			return movies, nil
 		},
 	},
+	"search": &graphql.Field{
+		Type:        graphql.NewList(movieType),
+		Description: "Search movies by title",
+		Args: graphql.FieldConfigArgument{
+			"titleContains": &graphql.ArgumentConfig{
+				Type: graphql.String,
+			},
+		},
+		Resolve: func(params graphql.ResolveParams) (interface{}, error) {
+			var theList []*models.Movie
+			search, ok := params.Args["titleContains"].(string)
+			if ok {
+				for _, currentMovie := range movies {
+					if strings.Contains(currentMovie.Title, search) {
+						log.Println("Found one")
+						theList = append(theList, currentMovie)
+					}
+				}
+			}
+			return theList, nil
+		},
+	},
 }
 
 var movieType = graphql.NewObject(
@@ -69,19 +93,21 @@ var movieType = graphql.NewObject(
 			"rating": &graphql.Field{
 				Type: graphql.Int,
 			},
+			"mpaa_rating": &graphql.Field{
+				Type: graphql.String,
+			},
 			"created_at": &graphql.Field{
 				Type: graphql.DateTime,
 			},
 			"updated_at": &graphql.Field{
 				Type: graphql.DateTime,
 			},
+			"poster": &graphql.Field{
+				Type: graphql.String,
+			},
 		},
 	},
 )
-
-type Query struct {
-	Query string
-}
 
 func (app *application) moviesGraphQL(w http.ResponseWriter, r *http.Request) {
 	movies, _ = app.models.DB.All()
@@ -103,10 +129,11 @@ func (app *application) moviesGraphQL(w http.ResponseWriter, r *http.Request) {
 	params := graphql.Params{Schema: schema, RequestString: query}
 	resp := graphql.Do(params)
 	if len(resp.Errors) > 0 {
+		log.Println(resp.Errors)
 		app.errorJSON(w, errors.New(fmt.Sprintf("failed: %+v", resp.Errors)))
 	}
 
-	j, _ := json.MarshalIndent(resp, "", " ")
+	j, _ := json.MarshalIndent(resp, "", "  ")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
