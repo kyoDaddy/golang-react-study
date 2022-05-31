@@ -41,14 +41,20 @@ type application struct {
 
 func main() {
 	var cfg config
-	var db_info = fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable",
-		"kyo", "1q2w3e4r", "postgres")
+
+	log.Println(os.Getenv("CONFIG_VAR_TWO"))
 
 	flag.IntVar(&cfg.port, "port", 4000, "Server port to listen on")
 	flag.StringVar(&cfg.env, "env", "development", "Application environment (development|production")
-	flag.StringVar(&cfg.db.dsn, "dsn", db_info, "Postgres connection string")
+	flag.StringVar(&cfg.db.dsn, "dsn",
+		fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+			"0.0.0.0", "5432", "kyo", "1q2w3e4r", "postgres"),
+		"Postgres connection string")
 	flag.StringVar(&cfg.jwt.secret, "jwt-secret", "2dce505d96a53c5768052ee90f3df2055657518dad489160df9913f66042e160", "secret")
 	flag.Parse()
+
+	// read jwt secret from env
+	//cfg.jwt.secret = os.Getenv("GO_MOVIES_JWT")
 
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 

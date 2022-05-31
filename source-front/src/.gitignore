@@ -1,0 +1,11 @@
+# Dependency directories
+node_modules/
+build
+
+.DS_Store
+
+# Vscode Local History extention
+.history
+
+# IntelliJ
+.idea

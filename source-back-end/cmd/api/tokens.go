@@ -28,6 +28,7 @@ func (app *application) Signin(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&creds)
 	if err != nil {
+		fmt.Println(err)
 		app.errorJSON(w, errors.New("unauthorized"))
 		return
 	}
@@ -36,6 +37,7 @@ func (app *application) Signin(w http.ResponseWriter, r *http.Request) {
 
 	err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(creds.Password))
 	if err != nil {
+		fmt.Println(err)
 		app.errorJSON(w, errors.New("unauthorized"))
 		return
 	}

@@ -26,3 +26,11 @@ npm install bootstrap
 npm install react-router-dom
 npm install react-router-dom@v5.3.0
 ~~~
+
+build
+~~~
+export REACT_APP_API_URL="http://localhost:4000" 
+-> fetch(`${process.env.REACT_APP_API_URL}/v1/movies`)
+
+npm run build
+~~~

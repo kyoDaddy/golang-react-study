@@ -42,5 +42,24 @@ go get github.com/justinas/alice
 
 
 
+#### env
+```text
+export GO_MOVIES_JWT='2dce505d96a53c5768052ee90f3df2055657518dad489160df9913f66042e160'
+// read jwt secret from env
+cfg.jwt.secret = os.Getenv("GO_MOVIES_JWT")
+```
+
+#### build
+```shell
+env GOOS=linux GOARCH=amd64 go build -o gomovies ./cmd/api 
+```
+
+#### profile viper
+```shell
+go get github.com/spf13/viper
+```
+
+
+
 
 
