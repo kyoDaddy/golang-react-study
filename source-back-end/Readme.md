@@ -12,6 +12,7 @@ go get github.com/graphql-go/graphql
 
 #### install postgresql 
 go get -u github.com/lib/pq
+docker run -p 5432:5432 --name postgres -e POSTGRES_PASSWORD=1q2w3e4r -d postgres
 
 ```sql
 select * from public.genres;
@@ -53,11 +54,16 @@ cfg.jwt.secret = os.Getenv("GO_MOVIES_JWT")
 ```shell
 env GOOS=linux GOARCH=amd64 go build -o gomovies ./cmd/api 
 ```
+```text
+docker build -t test .
+docker run --cap-add=NET_ADMIN -e "GO_PROFILE=dev" --name test -p 4000:4000 test 
+```
 
 #### profile viper
 ```shell
 go get github.com/spf13/viper
 ```
+[viper reference](https://frozenpond.tistory.com/165?category=1216470)
 
 
 

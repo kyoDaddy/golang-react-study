@@ -1,6 +1,7 @@
 package main
 
 import (
+	"backend/config"
 	"backend/models"
 	"encoding/json"
 	"errors"
@@ -50,7 +51,7 @@ func (app *application) Signin(w http.ResponseWriter, r *http.Request) {
 	claims.Issuer = "mydomain.com"
 	claims.Audiences = []string{"mydomain.com"}
 
-	jwtBytes, err := claims.HMACSign(jwt.HS256, []byte(app.config.jwt.secret))
+	jwtBytes, err := claims.HMACSign(jwt.HS256, []byte(config.RuntimeConf.Jwt.Secret))
 	if err != nil {
 		app.errorJSON(w, errors.New("error signing"))
 		return

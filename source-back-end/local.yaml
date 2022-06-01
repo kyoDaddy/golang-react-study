@@ -1,0 +1,12 @@
+datasource:
+  dbType: "postgres"
+  host: "0.0.0.0"
+  port: "5432"
+  userName: "kyo"
+  password: "1q2w3e4r"
+  databaseName: "postgres"
+server:
+  port: 4000
+  profile: local
+jwt:
+  secret: "2dce505d96a53c5768052ee90f3df2055657518dad489160df9913f66042e160"

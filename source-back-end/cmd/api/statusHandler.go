@@ -1,6 +1,7 @@
 package main
 
 import (
+	"backend/config"
 	"encoding/json"
 	"net/http"
 )
@@ -8,7 +9,7 @@ import (
 func (app *application) statusHandler(w http.ResponseWriter, r *http.Request) {
 	currentStatus := AppStatus{
 		Status:      "Available",
-		Environment: app.config.env,
+		Environment: config.RuntimeConf.Server.Profile,
 		Version:     version,
 	}
 

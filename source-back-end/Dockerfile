@@ -1,16 +1,14 @@
-FROM golang:1.18-alpine
-
-RUN mkdir -p /app
-WORKDIR /app
-
-COPY go.mod .
-COPY go.sum .
-RUN go mod download
+# AWS ECR 에서의 이미지 크기 감소는 비용 감소로 이뤄지니까 최적화 수정 적용
+FROM  golang:1.18-buster as builder
+WORKDIR /tmp/tiny-golang-image
 COPY . .
-RUN CGO_ENABLED=0 go build -o gomovies ./cmd/api
 
-# 다음 프로세스에는 전달안됨..
-#RUN ["chmod", "+x", "/app/setup.sh"]
-#RUN source /app/setup.sh
+RUN go mod tidy \
+    && go get -u -d -v ./...
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags '-s -w' -o main cmd/api/*.go
 
-CMD ['./gomovies -dsn="host=172.17.0.3 sslmode=disable user=kyo password=1q2w3e4r dbname=postgres"']
+FROM scratch
+COPY --from=builder /tmp/tiny-golang-image /
+
+ENV GO_PROFILE=dev
+CMD ["/main"]
